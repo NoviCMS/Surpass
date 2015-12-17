@@ -1,6 +1,6 @@
 <?php namespace Sukohi\Surpass;
 
-use DB;
+use DB, Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\File;
 use Carbon\Carbon;
@@ -8,7 +8,9 @@ use Exception;
 
 class Surpass {
 
-    const TABLE = 'image_files';
+    //TODO: translate buttons!
+
+    const TABLE = 'products_image_files';
     const DIR_HIDDEN_NAME = 'surpass_hidden_dir';
     const ID_HIDDEN_NAME = 'surpass_ids';
     const TOKEN_HIDDEN_NAME = '_token';
@@ -156,6 +158,8 @@ class Surpass {
 
         $load_data = [];
 
+
+
         if(!empty($this->_load)) {
 
             foreach ($this->_load as $id => $load) {
@@ -171,6 +175,7 @@ class Surpass {
             }
 
         }
+
 
         if($mode == 'preview') {
 
@@ -206,7 +211,9 @@ class Surpass {
                 'preview_id' => $this->renderId('preview'),
                 'css_div' => Surpass::renderCss('div'),
                 'css_loading' => Surpass::renderCss('loading'),
-                'css_button' => Surpass::renderCss('button'),
+                'css_deletebutton' => Surpass::renderCss('deletebutton'),
+                'css_editbutton' => Surpass::renderCss('editbutton'),
+                'css_changebutton' => Surpass::renderCss('changebutton'),
                 'overwrite' => $this->_overwrite,
                 'timeout' => $this->_timeout
 
@@ -269,9 +276,9 @@ class Surpass {
         $id = $width = $height = -1;
         $mime_type = '';
         $input_id = $this->_ids['input'];
-        $extension = Input::file($input_id)->getClientOriginalExtension();
+        $extension = Input::file('image_upload')->getClientOriginalExtension();
         $filename = $this->filename($extension);
-        $file_size = Input::file($input_id)->getSize();
+        $file_size = Input::file('image_upload')->getSize();
         $error_message = '';
 
         DB::beginTransaction();
@@ -290,7 +297,7 @@ class Surpass {
 
             }
 
-            Input::file($input_id)->move($save_path, $filename);
+            Input::file('image_upload')->move($save_path, $filename);
             $id = $this->saveData($filename, $extension, $file_size, $attributes);
             DB::commit();
             list($width, $height, $image_type) = getimagesize($save_path .'/'. $filename);
@@ -475,7 +482,7 @@ class Surpass {
 
             $this->_load = [];
             $image_files = DB::table(self::TABLE)
-                ->select('id', 'dir', 'filename', 'extension', 'size', 'created_at', 'attributes')
+                ->select('id', 'dir', 'filename', 'extension', 'size', 'created_at', 'attributes', 'userid', 'productid')
                 ->whereIn('id', $ids)
                 ->get();
 
@@ -488,6 +495,53 @@ class Surpass {
                     'filename' => $image_file->filename,
                     'extension' => $image_file->extension,
                     'size' => $image_file->size,
+                    'userid' => $image_file->userid,
+                    'productid' => $image_file->productid,
+                    'created_at' => $image_file->created_at,
+                    'attributes' => json_decode($image_file->attributes, true)
+
+                ]);
+
+            }
+
+        }
+
+        return $this;
+
+    }
+
+
+    public function loadqueue($userid, $old_flag=true) {
+
+        if($old_flag
+            && old($this->_id_hidden_name)
+            && is_array(old($this->_id_hidden_name))) {
+
+            $userid = old($this->_id_hidden_name);
+
+        }
+
+        if(!empty($userid)) {
+
+            $this->_load = [];
+            $image_files = DB::table(self::TABLE)
+                ->select('id', 'dir', 'filename', 'extension', 'size', 'created_at', 'attributes', 'userid', 'productid')
+                ->where('userid', $userid)
+                ->whereNull('productid')
+                ->get();
+
+            foreach ($image_files as $image_file) {
+
+                $this->addLoadObject([
+
+                    'id' => $image_file->id,
+                    'dir' => $image_file->dir,
+                    'filename' => $image_file->filename,
+                    'extension' => $image_file->extension,
+                    'size' => $image_file->size,
+                    'userid' => $image_file->userid,
+                    'productid' => $image_file->productid,
+                    'created_at' => $image_file->created_at,
                     'created_at' => $image_file->created_at,
                     'attributes' => json_decode($image_file->attributes, true)
 
@@ -565,6 +619,9 @@ class Surpass {
         $filename = $params['filename'];
         $attributes = $params['attributes'];
 
+        $userid = $params['userid'];
+        $productid = $params['productid'];
+
         $load = new \stdClass;
         $load->id = $id;
         $load->dir = $dir;
@@ -572,7 +629,8 @@ class Surpass {
         $load->path = $this->filePath($dir, $filename);
         $load->url = $this->fileUrl($dir, $filename);
         $load->attributes = $attributes;
-        $load->tag = '<img src="'. $load->url .'"'. $this->generateAttribute($attributes) .'>';
+        $load->userid = $userid;
+        $load->productid = $productid;
         $this->_load[$id] = $load;
 
     }
@@ -609,12 +667,16 @@ class Surpass {
 
     private function saveData($filename, $extension, $size, $attributes) {
 
+        $user = Auth::user();
+
         $save_params = [
 
             'dir' => $this->_dir,
             'filename' => $filename,
             'extension' => $extension,
             'size' => $size,
+            'userid' => $user->id,
+            'productid' => null,
             'created_at' => Carbon::now(),
             'attributes' => (!empty($attributes)) ? json_encode($attributes) : ''
 
