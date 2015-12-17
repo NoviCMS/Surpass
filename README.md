@@ -1,4 +1,4 @@
-Surpass
+Surpass for in2shop
 =====
 
 A PHP package mainly developed for Laravel to manage uploading images using Ajax and displaying thumbnails.  
