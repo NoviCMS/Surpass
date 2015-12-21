@@ -222,15 +222,15 @@
                 var divCol = $('#'+ TU{!! $dir_studly !!}.ids['preview']).find(content).parent().parent().parent();
 
                 divCol.find('.images')
-                        .css({'text-align' : 'center', 'height' : '254px'});
+                        .css({'text-align' : 'center'});
 
                 divCol.find('.images').find('img')
-                        .wrap('<div class="col-md-12" style="height:200px; margin-bottom:20px;"></div>')
+                        .wrap('<div class="col-md-12" style="height:'+TU{!! $dir_studly !!}.previewParameters.maxHeight+'; margin-bottom:20px;"></div>')
                         .css({
                             'width' : 'auto',
                             'height' : 'auto',
-                            'max-height' : '200px',
-                            'max-width' : '100%',
+                            'max-height' : TU{!! $dir_studly !!}.previewParameters.maxHeight,
+                            'max-width' : TU{!! $dir_studly !!}.previewParameters.maxWidth,
                             'vertical-align' : 'middle'
                         }).parent().prepend('<span class="helper" style="display: inline-block; height: 100%; vertical-align: middle;"></span>');
 
@@ -254,16 +254,16 @@
 
                 if($( window ).width() < "751") {
                     $("#preview_images").height(function (index, height) {
-                        return (405 * (processingfilenr));
+                        return ($(".box-image").height() * (processingfilenr));
                     });
                 }else if($( window ).width() < "975") {
                     $("#preview_images").height(function (index, height) {
-                        return (371 * Math.ceil((processingfilenr) / 2));
+                        return ($(".box-image").height() * Math.ceil((processingfilenr) / 2));
                     });
                 }else if($( window ).width() >= "975") {
 
                     $("#preview_images").height(function (index, height) {
-                        return (337 * Math.ceil((processingfilenr) / 3));
+                        return ($(".box-image").height() * Math.ceil((processingfilenr) / 3));
                     });
                 }
             }else{

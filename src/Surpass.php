@@ -519,7 +519,7 @@ class Surpass {
     }
 
 
-    public function loadqueue($userid, $old_flag=true) {
+    public function loadqueue($userid, $old_flag=false) {
 
         if($old_flag
             && old($this->_id_hidden_name)
