@@ -11,6 +11,7 @@
         previewParameters: {},
         processingFile: 0,
         loadData: [],
+        imageOrder: 1,
         overCallback: null,
         overCallbackFlag: false,
         progress: '',
@@ -174,8 +175,10 @@
                 var filename = new_filename;
             }
 
+
+
             var previewBox = tmpl('preview_box_{!! $dir !!}', {});
-            var previewFooter = tmpl('preview_footer_{!! $dir !!}', {surpassId: id, img: file_path});
+            var previewFooter = tmpl('preview_footer_{!! $dir !!}', {surpassId: id,img: file_path});
             var hiddenObj = $('.{!! $id_hidden_name !!}[value="'+ id +'"]');
 
             if(hiddenObj.length) {
@@ -208,7 +211,7 @@
                         .parent().prepend('<span class="helper" style="display: inline-block; height: 100%; vertical-align: middle;"></span>')
                         .parent().parent().parent().parent().find('.box-header').empty()
                         .append('<h3 class="box-title">'+ filename +'</h3>')
-                        .append('<div class="box-tools pull-right"><button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button></div>');
+                        .parent().parent().attr("id", id);
 
 
             } else {
@@ -236,7 +239,7 @@
 
                 divCol.find('.box-header')
                         .append('<h3 class="box-title">'+ filename +'</h3>')
-                        .append('<div class="box-tools pull-right"><button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button></div>');
+                        .parent().parent().attr("id", id);
 
             }
 
@@ -244,6 +247,7 @@
 
             TU{!! $dir_studly !!}.resizeheight();
             TU{!! $dir_studly !!}.formData['surpass_overwrite_id'] = 0;
+            TU{!! $dir_studly !!}.imageOrder++;
 
         },
         resizeheight: function() {
@@ -316,6 +320,7 @@
 
             targetObj.remove();
             TU{!! $dir_studly !!}.processingFile--;
+            TU{!! $dir_studly !!}.imageOrder--;
             TU{!! $dir_studly !!}.formData['surpass_overwrite_id'] = -1;
             TU{!! $dir_studly !!}.overwritePreviewBox = null;
 
@@ -327,6 +332,7 @@
             TU{!! $dir_studly !!}.formData['surpass_overwrite_id'] = targetId;
             TU{!! $dir_studly !!}.overwritePreviewBox = $(self);
             $('#'+ TU{!! $dir_studly !!}.ids['input']).click();
+            TU{!! $dir_studly !!}.imageOrder--;
 
         },
         isFull: function() {
@@ -378,7 +384,7 @@
         <button{!! $css_editbutton !!} type="button" onclick="openResizeCropModal(this,{%=o.surpassId%},'{%=o.img%}')" >bewerk</button>
     </div>
     <div class="col-md-4 col-sm-6 col-xs-12">
-            <button{!! $css_deletebutton !!} type="button" onclick="return TU{!! $dir_studly !!}.remove(this, {%=o.surpassId%});">{!! $button_label !!}</button>
+        <button{!! $css_deletebutton !!} type="button" onclick="return TU{!! $dir_studly !!}.remove(this, {%=o.surpassId%});">{!! $button_label !!}</button>
     </div>
 </script>
 <script>

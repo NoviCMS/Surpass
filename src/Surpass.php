@@ -490,7 +490,7 @@ class Surpass {
 
             $this->_load = [];
             $image_files = DB::table(self::TABLE)
-                ->select('id', 'dir', 'filename', 'extension', 'size', 'created_at', 'attributes', 'userid', 'productid')
+                ->select('id', 'dir', 'filename', 'extension', 'size', 'created_at', 'attributes', 'users_id', 'products_id', 'order')
                 ->whereIn('id', $ids)
                 ->get();
 
@@ -503,8 +503,9 @@ class Surpass {
                     'filename' => $image_file->filename,
                     'extension' => $image_file->extension,
                     'size' => $image_file->size,
-                    'userid' => $image_file->userid,
-                    'productid' => $image_file->productid,
+                    'users_id' => $image_file->users_id,
+                    'products_id' => $image_file->products_id,
+                    'order' => $image_file->order,
                     'created_at' => $image_file->created_at,
                     'attributes' => json_decode($image_file->attributes, true)
 
@@ -519,23 +520,23 @@ class Surpass {
     }
 
 
-    public function loadqueue($userid, $old_flag=false) {
+    public function loadqueue($users_id, $old_flag=true) {
 
         if($old_flag
             && old($this->_id_hidden_name)
             && is_array(old($this->_id_hidden_name))) {
 
-            $userid = old($this->_id_hidden_name);
+            $users_id = old($this->_id_hidden_name);
 
         }
 
-        if(!empty($userid)) {
+        if(!empty($users_id)) {
 
             $this->_load = [];
             $image_files = DB::table(self::TABLE)
-                ->select('id', 'dir', 'filename', 'extension', 'size', 'created_at', 'attributes', 'userid', 'productid')
-                ->where('userid', $userid)
-                ->whereNull('productid')
+                ->select('id', 'dir', 'filename', 'extension', 'size', 'created_at', 'attributes', 'users_id', 'products_id', 'order')
+                ->where('users_id', $users_id)
+                ->whereNull('products_id')
                 ->get();
 
             foreach ($image_files as $image_file) {
@@ -547,9 +548,9 @@ class Surpass {
                     'filename' => $image_file->filename,
                     'extension' => $image_file->extension,
                     'size' => $image_file->size,
-                    'userid' => $image_file->userid,
-                    'productid' => $image_file->productid,
-                    'created_at' => $image_file->created_at,
+                    'users_id' => $image_file->users_id,
+                    'products_id' => $image_file->products_id,
+                    'order' => $image_file->order,
                     'created_at' => $image_file->created_at,
                     'attributes' => json_decode($image_file->attributes, true)
 
@@ -627,8 +628,9 @@ class Surpass {
         $filename = $params['filename'];
         $attributes = $params['attributes'];
 
-        $userid = $params['userid'];
-        $productid = $params['productid'];
+        $users_id = $params['users_id'];
+        $products_id = $params['products_id'];
+        $order = $params['order'];
 
         $load = new \stdClass;
         $load->id = $id;
@@ -637,8 +639,9 @@ class Surpass {
         $load->path = $this->filePath($dir, $filename);
         $load->url = $this->fileUrl($dir, $filename);
         $load->attributes = $attributes;
-        $load->userid = $userid;
-        $load->productid = $productid;
+        $load->users_id = $users_id;
+        $load->products_id = $products_id;
+        $load->order = $order;
         $this->_load[$id] = $load;
 
     }
@@ -683,8 +686,9 @@ class Surpass {
             'filename' => $filename,
             'extension' => $extension,
             'size' => $size,
-            'userid' => $user->id,
-            'productid' => null,
+            'users_id' => $user->id,
+            'products_id' => null,
+            'order' => null,
             'created_at' => Carbon::now(),
             'attributes' => (!empty($attributes)) ? json_encode($attributes) : ''
 
