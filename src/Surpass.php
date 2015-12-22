@@ -306,7 +306,15 @@ class Surpass {
             }
 
             Input::file('image_upload')->move($save_path, $filename);
-            $id = $this->saveData($filename, $extension, $file_size, $attributes);
+            if(!empty($_POST['productid'])){
+
+                $ordernr = DB::table(self::TABLE)->where('products_id', $_POST['productid'])->max('order') + 1;
+
+                $id = $this->saveData($filename, $extension, $file_size, $attributes, $_POST['productid'], $ordernr);
+            }else{
+                $id = $this->saveData($filename, $extension, $file_size, $attributes, null, null);
+            }
+
             DB::commit();
             list($width, $height, $image_type) = getimagesize($save_path .'/'. $filename);
             $mime_type = image_type_to_mime_type ($image_type);
@@ -520,7 +528,7 @@ class Surpass {
     }
 
 
-    public function loadqueue($users_id, $old_flag=true) {
+    public function loadqueue($users_id, $products_id, $old_flag=false) {
 
         if($old_flag
             && old($this->_id_hidden_name)
@@ -530,14 +538,26 @@ class Surpass {
 
         }
 
-        if(!empty($users_id)) {
+        if(!empty($users_id) || !empty($products_id)) {
 
             $this->_load = [];
-            $image_files = DB::table(self::TABLE)
-                ->select('id', 'dir', 'filename', 'extension', 'size', 'created_at', 'attributes', 'users_id', 'products_id', 'order')
-                ->where('users_id', $users_id)
-                ->whereNull('products_id')
-                ->get();
+
+            if(!empty($users_id)){
+                $image_files = DB::table(self::TABLE)
+                    ->select('id', 'dir', 'filename', 'extension', 'size', 'created_at', 'attributes', 'users_id', 'products_id', 'order')
+                    ->where('users_id', $users_id)
+                    ->whereNull('products_id')
+                    ->get();
+            }
+
+            if(!empty($products_id)){
+                $image_files = DB::table(self::TABLE)
+                    ->select('id', 'dir', 'filename', 'extension', 'size', 'created_at', 'attributes', 'users_id', 'products_id', 'order')
+                    ->where('products_id', $products_id)
+                    ->orderBy('order', 'asc')
+                    ->get();
+            }
+
 
             foreach ($image_files as $image_file) {
 
@@ -676,7 +696,7 @@ class Surpass {
 
     }
 
-    private function saveData($filename, $extension, $size, $attributes) {
+    private function saveData($filename, $extension, $size, $attributes, $products_id, $order) {
 
         $user = Auth::user();
 
@@ -687,8 +707,8 @@ class Surpass {
             'extension' => $extension,
             'size' => $size,
             'users_id' => $user->id,
-            'products_id' => null,
-            'order' => null,
+            'products_id' => $products_id,
+            'order' => $order,
             'created_at' => Carbon::now(),
             'attributes' => (!empty($attributes)) ? json_encode($attributes) : ''
 
@@ -697,6 +717,12 @@ class Surpass {
         if($this->isOverwrite()) {
 
             $id = Input::get(self::KEY_OVERWRITE_ID);
+
+            $image = DB::table(self::TABLE)->where('id', $id)->first();
+
+            $save_params['products_id'] = $image->products_id;
+            $save_params['order'] = $image->order;
+
             DB::table(self::TABLE)->where('id', $id)->update($save_params);
 
         } else {

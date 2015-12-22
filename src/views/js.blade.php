@@ -111,6 +111,9 @@
                 },
                 done: function (e, data) {
 
+                    $('#'+ TU{!! $dir_studly !!}.ids['preview'] +' .box-image:not(.used) > :first').parent().addClass("used").attr('id', data['result']['insertId']);
+
+
                     if(TU{!! $dir_studly !!}.progress != '') {
 
                         $.each($('#'+ TU{!! $dir_studly !!}.ids['preview']).children(), function(index, child){
@@ -211,16 +214,14 @@
                         .parent().prepend('<span class="helper" style="display: inline-block; height: 100%; vertical-align: middle;"></span>')
                         .parent().parent().parent().parent().find('.box-header').empty()
                         .append('<h3 class="box-title">'+ filename +'</h3>')
-                        .parent().parent().attr("id", id);
 
 
             } else {
 
-                $('#'+ TU{!! $dir_studly !!}.ids['preview'] +' .box-image:not(.used) > :first').find('.box-body').empty();
+                $('#'+ TU{!! $dir_studly !!}.ids['preview'] +' #'+ id).find('.box-body').empty();
 
-                $('#'+ TU{!! $dir_studly !!}.ids['preview'] +' .box-image:not(.used) > :first').find('.box-body').parent().prepend('<div class="box-header with-border"></div>');
-                $('#'+ TU{!! $dir_studly !!}.ids['preview'] +' .box-image:not(.used) > :first').find('.box-body').removeAttr('style').append(content);
-                $('#'+ TU{!! $dir_studly !!}.ids['preview'] +' .box-image:not(.used) > :first').parent().addClass("used");
+                $('#'+ TU{!! $dir_studly !!}.ids['preview'] +' #'+ id).find('.box-body').parent().prepend('<div class="box-header with-border"></div>');
+                $('#'+ TU{!! $dir_studly !!}.ids['preview'] +' #'+ id).find('.box-body').removeAttr('style').append(content);
 
                 var divCol = $('#'+ TU{!! $dir_studly !!}.ids['preview']).find(content).parent().parent().parent();
 
@@ -239,7 +240,6 @@
 
                 divCol.find('.box-header')
                         .append('<h3 class="box-title">'+ filename +'</h3>')
-                        .parent().parent().attr("id", id);
 
             }
 
@@ -287,8 +287,9 @@
                 var img = $('<img/>', {
                     src: url
                 });
-                var loadingBox = tmpl('loading_box_{!! $dir !!}', {content: TU{!! $dir_studly !!}.progress});
+                var loadingBox = tmpl('loading_box_{!! $dir !!}', {content: TU{!! $dir_studly !!}.progress, imageid: id});
                 $('#' + TU{!! $dir_studly !!}.ids['preview']).append(loadingBox);
+                $('#'+ TU{!! $dir_studly !!}.ids['preview'] +' #'+ id).addClass("used");
                 loadImage(url, function (img) {
                             TU{!! $dir_studly !!}.preview(img, id, filename)
                         }, TU{!! $dir_studly !!}.previewParameters
@@ -297,6 +298,8 @@
 
         },
         remove: function(self, id) {
+
+            $(self).addClass('disabled');
 
             var removeUrl = $('#'+ TU{!! $dir_studly !!}.ids['input']).data('removeUrl');
             var formData = TU{!! $dir_studly !!}.formData;
@@ -327,12 +330,16 @@
             TU{!! $dir_studly !!}.resizeheight();
 
         },
-        overwrite: function(self, targetId) {
+        overwrite: function(self, container, targetId) {
+
+            $(self).addClass('disabled');
 
             TU{!! $dir_studly !!}.formData['surpass_overwrite_id'] = targetId;
-            TU{!! $dir_studly !!}.overwritePreviewBox = $(self);
+            TU{!! $dir_studly !!}.overwritePreviewBox = $(container);
             $('#'+ TU{!! $dir_studly !!}.ids['input']).click();
             TU{!! $dir_studly !!}.imageOrder--;
+
+            $(self).removeClass('disabled');
 
         },
         isFull: function() {
@@ -362,7 +369,7 @@
 	<div{!! $css_div !!}></div>
 </script>
 <script type="text/x-tmpl" id="loading_box_{!! $dir !!}">
-    <div class="col-md-4 col-sm-6 col-xs-12 box-image">
+    <div class="col-md-4 col-sm-6 col-xs-12 box-image" id="{%#o.imageid%}">
         <div class="box box-success box-solid">
             <div class="box-body" style="height:315px">
                 {%#o.content%}
@@ -378,7 +385,7 @@
 <script type="text/x-tmpl" id="preview_footer_{!! $dir !!}">
     <input class="{!! $id_hidden_name !!}" type="hidden" name="{!! $id_hidden_name !!}[]" value="{%=o.surpassId%}">
     <div class="col-md-4 col-sm-6 col-xs-12">
-        <button{!! $css_changebutton !!} type="button" imageid="{%=o.surpassId%}" onclick="return TU{!! $dir_studly !!}.overwrite(this.parentNode.parentNode.parentNode.parentNode, {%=o.surpassId%});">Verander</button>
+        <button{!! $css_changebutton !!} type="button" imageid="{%=o.surpassId%}" onclick="return TU{!! $dir_studly !!}.overwrite(this, this.parentNode.parentNode.parentNode.parentNode, {%=o.surpassId%});">Verander</button>
     </div>
     <div class="col-md-4 col-sm-6 col-xs-12">
         <button{!! $css_editbutton !!} type="button" onclick="openResizeCropModal(this,{%=o.surpassId%},'{%=o.img%}')" >bewerk</button>
@@ -475,7 +482,7 @@
             var uploadUrl = $('#'+ TUProducts.ids['input']).attr('data-url');
             var fileName = "upload.png";
 
-            var loadingBox = tmpl('loading_box_change_{!! $dir !!}', {content: TU{!! $dir_studly !!}.progress});
+            var loadingBox = tmpl('loading_box_change_{!! $dir !!}', {content: TU{!! $dir_studly !!}.progress, imageid: imgid});
             $('.{!! $id_hidden_name !!}[value='+imgid+']').parent().parent().parent().empty().append(loadingBox).parent().removeClass("used");
 
             if (canvasImage.toBlob) {
