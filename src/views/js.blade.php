@@ -369,7 +369,7 @@
 	<div{!! $css_div !!}></div>
 </script>
 <script type="text/x-tmpl" id="loading_box_{!! $dir !!}">
-    <div class="col-md-4 col-sm-6 col-xs-12 box-image" id="{%#o.imageid%}">
+    <div class="col-md-4 col-sm-6 col-xs-12 box-image" style="cursor: all-scroll;" id="{%#o.imageid%}">
         <div class="box box-success box-solid">
             <div class="box-body" style="height:315px">
                 {%#o.content%}
@@ -445,13 +445,11 @@
 
             var $image = $('#resizeCropimage');
 
-            //TODO: MAKE SETTING FOR THESE OPTIONS
-            console.log('cropper init()');
             $image.cropper({
-                aspectRatio: 4 / 3,
-                viewMode: 0,
-                responsive: true,
-                autoCropArea: 1,
+                aspectRatio: {!! Setting::get('products.images.ResizeAspectRatio') !!},
+                viewMode: {!! Setting::get('products.images.ResizeViewMode') !!},
+                responsive: {!! Setting::get('products.images.ResizeResponsive') !!},
+                autoCropArea: {!! Setting::get('products.images.ResizeAutoCropArea') !!},
                 built: function () {
                     $image.cropper('setCanvasData', canvasData);
                     $image.cropper('setCropBoxData', cropBoxData);
