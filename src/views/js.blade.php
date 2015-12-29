@@ -248,6 +248,7 @@
             TU{!! $dir_studly !!}.resizeheight();
             TU{!! $dir_studly !!}.formData['surpass_overwrite_id'] = 0;
             TU{!! $dir_studly !!}.imageOrder++;
+            $('#preview_images').trigger('sortupdate');
 
         },
         resizeheight: function() {
@@ -310,6 +311,7 @@
                 if(data['result']) {
 
                     TU{!! $dir_studly !!}.removeBox($(self).parent().parent().parent().parent().parent());
+                    $('#preview_images').trigger('sortupdate');
 
                 }
                 {!! (!empty($callbacks['remove'])) ? $callbacks['remove'] : '' !!}
