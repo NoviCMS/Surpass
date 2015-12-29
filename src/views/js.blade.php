@@ -218,6 +218,8 @@
 
             } else {
 
+
+
                 $('#'+ TU{!! $dir_studly !!}.ids['preview'] +' #'+ id).find('.box-body').empty();
 
                 $('#'+ TU{!! $dir_studly !!}.ids['preview'] +' #'+ id).find('.box-body').parent().prepend('<div class="box-header with-border"></div>');
@@ -311,7 +313,7 @@
                 if(data['result']) {
 
                     TU{!! $dir_studly !!}.removeBox($(self).parent().parent().parent().parent().parent());
-                    $('#preview_images').trigger('sortupdate');
+
 
                 }
                 {!! (!empty($callbacks['remove'])) ? $callbacks['remove'] : '' !!}
@@ -505,6 +507,9 @@
                                 success: function(data){
 
                                     saveMode = "edit";
+
+
+                                    $('#'+ TU{!! $dir_studly !!}.ids['preview'] +' .box-image:not(.used) > :first').parent().addClass("used").attr('id', data['insertId']);
 
 
                                     loadImage(blob, function (img) {
