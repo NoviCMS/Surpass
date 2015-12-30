@@ -373,7 +373,7 @@
 	<div{!! $css_div !!}></div>
 </script>
 <script type="text/x-tmpl" id="loading_box_{!! $dir !!}">
-    <div class="col-md-4 col-sm-6 col-xs-12 box-image" style="cursor: all-scroll;" id="{%#o.imageid%}">
+    <div class="col-md-4 col-sm-6 col-xs-12 box-image" @shield('admin.product.edit') style="cursor: all-scroll;" @endshield id="{%#o.imageid%}">
         <div class="box box-success box-solid">
             <div class="box-body" style="height:315px">
                 {%#o.content%}
@@ -387,6 +387,7 @@
             </div>
 </script>
 <script type="text/x-tmpl" id="preview_footer_{!! $dir !!}">
+    @shield('admin.product.edit')
     <input class="{!! $id_hidden_name !!}" type="hidden" name="{!! $id_hidden_name !!}[]" value="{%=o.surpassId%}">
     <div class="col-md-4 col-sm-6 col-xs-12">
         <button{!! $css_changebutton !!} type="button" imageid="{%=o.surpassId%}" onclick="return TU{!! $dir_studly !!}.overwrite(this, this.parentNode.parentNode.parentNode.parentNode, {%=o.surpassId%});">Verander</button>
@@ -397,6 +398,7 @@
     <div class="col-md-4 col-sm-6 col-xs-12">
         <button{!! $css_deletebutton !!} type="button" onclick="return TU{!! $dir_studly !!}.remove(this, {%=o.surpassId%});">{!! $button_label !!}</button>
     </div>
+    @endshield
 </script>
 <script>
 
@@ -441,6 +443,8 @@
             TU{!! $dir_studly !!}.resizeheight();
         });
 
+
+        @shield('admin.product.edit')
 
         var cropBoxData;
         var canvasData;
@@ -541,6 +545,8 @@
 
 
         });
+
+        @endshield
 
     });
 
