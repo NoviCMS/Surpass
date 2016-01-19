@@ -333,6 +333,8 @@
 
             TU{!! $dir_studly !!}.resizeheight();
 
+            $('#preview_images').trigger('sortupdate');
+
         },
         overwrite: function(self, container, targetId) {
 
