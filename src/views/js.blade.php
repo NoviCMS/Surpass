@@ -486,8 +486,8 @@
             canvasImage = $image.cropper('getCroppedCanvas');
             $image.cropper('destroy');
             var imgid = $('#resizeCropimage').attr('imgid');
-            var input = $('#'+ TUProducts.ids['input']);
-            var uploadUrl = $('#'+ TUProducts.ids['input']).attr('data-url');
+            var input = $('#'+ TU{!! $dir_studly !!}.ids['input']);
+            var uploadUrl = $('#'+ TU{!! $dir_studly !!}.ids['input']).attr('data-url');
             var fileName = "upload.png";
 
             var loadingBox = tmpl('loading_box_change_{!! $dir !!}', {content: TU{!! $dir_studly !!}.progress, imageid: imgid});
