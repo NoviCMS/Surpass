@@ -221,6 +221,7 @@ class Surpass {
                 'id_hidden_name' => $this->_id_hidden_name,
                 'dir' => strtolower($this->_dir),
                 'dir_studly' => studly_case($this->_dir),
+                'imageObj' => $this->_imageObj,
                 'input_id' => $this->renderId('input'),
                 'preview_id' => $this->renderId('preview'),
                 'css_div' => Surpass::renderCss('div'),

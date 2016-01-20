@@ -1,6 +1,6 @@
 <script type="text/javascript">
 
-    var TU{!! $dir_studly !!} = {
+    var TU{!! $imageObj !!} = {
 
         ids: {
             input: '{!! $input_id !!}',
@@ -23,13 +23,13 @@
 
         init: function() {
 
-            if(TU{!! $dir_studly !!}.loadData.length > 0) {
+            if(TU{!! $imageObj !!}.loadData.length > 0) {
 
-                TU{!! $dir_studly !!}.initialPreview();
+                TU{!! $imageObj !!}.initialPreview();
 
             }
 
-            $('#'+ TU{!! $dir_studly !!}.ids['input']).fileupload({
+            $('#'+ TU{!! $imageObj !!}.ids['input']).fileupload({
                 dataType: 'json',
                 @if(!empty($resize_params['size']))
                 disableImageResize: false,
@@ -52,31 +52,31 @@
 
                     if(fileType.indexOf('image/') === 0) {
 
-                        if(!TU{!! $dir_studly !!}.isFull()) {
+                        if(!TU{!! $imageObj !!}.isFull()) {
                             var allowupload = true;
-                        }else if(TU{!! $dir_studly !!}.formData['surpass_overwrite_id'] > 0){
+                        }else if(TU{!! $imageObj !!}.formData['surpass_overwrite_id'] > 0){
                             var allowupload = true;
-                        }else if(TU{!! $dir_studly !!}.overCallbackFlag && $.isFunction(TU{!! $dir_studly !!}.overCallback)) {
+                        }else if(TU{!! $imageObj !!}.overCallbackFlag && $.isFunction(TU{!! $imageObj !!}.overCallback)) {
 
-                            TU{!! $dir_studly !!}.overCallback();
-                            TU{!! $dir_studly !!}.overCallbackFlag = false;
+                            TU{!! $imageObj !!}.overCallback();
+                            TU{!! $imageObj !!}.overCallbackFlag = false;
 
                         }
 
                         if(allowupload == true) {
-                            if(TU{!! $dir_studly !!}.progress != '') {
+                            if(TU{!! $imageObj !!}.progress != '') {
 
-                                if(!(TU{!! $dir_studly !!}.formData['surpass_overwrite_id'] > 0)) {
-                                    TU{!! $dir_studly !!}.processingFile++;
-                                    TU{!! $dir_studly !!}.resizeheight();
+                                if(!(TU{!! $imageObj !!}.formData['surpass_overwrite_id'] > 0)) {
+                                    TU{!! $imageObj !!}.processingFile++;
+                                    TU{!! $imageObj !!}.resizeheight();
                                 }
 
-                                if(TU{!! $dir_studly !!}.formData['surpass_overwrite_id'] > 0) {
-                                    var loadingBox = tmpl('loading_box_change_{!! $dir !!}', {content: TU{!! $dir_studly !!}.progress});
-                                    $('.{!! $id_hidden_name !!}[value='+TU{!! $dir_studly !!}.formData['surpass_overwrite_id']+']').parent().parent().parent().empty().append(loadingBox);
+                                if(TU{!! $imageObj !!}.formData['surpass_overwrite_id'] > 0) {
+                                    var loadingBox = tmpl('loading_box_change_{!! $dir !!}', {content: TU{!! $imageObj !!}.progress});
+                                    $('.{!! $id_hidden_name !!}[value='+TU{!! $imageObj !!}.formData['surpass_overwrite_id']+']').parent().parent().parent().empty().append(loadingBox);
                                 }else{
-                                    var loadingBox = tmpl('loading_box_{!! $dir !!}', {content: TU{!! $dir_studly !!}.progress});
-                                    $('#' + TU{!! $dir_studly !!}.ids['preview']).append(loadingBox);
+                                    var loadingBox = tmpl('loading_box_{!! $dir !!}', {content: TU{!! $imageObj !!}.progress});
+                                    $('#' + TU{!! $imageObj !!}.ids['preview']).append(loadingBox);
                                 }
 
                             }
@@ -101,22 +101,22 @@
                 },
                 change: function (e, data) {
 
-                    TU{!! $dir_studly !!}.overCallbackFlag = true;
+                    TU{!! $imageObj !!}.overCallbackFlag = true;
 
                 },
                 drop: function (e, data) {
 
-                    TU{!! $dir_studly !!}.overCallbackFlag = true;
+                    TU{!! $imageObj !!}.overCallbackFlag = true;
 
                 },
                 done: function (e, data) {
 
-                    $('#'+ TU{!! $dir_studly !!}.ids['preview'] +' .box-image:not(.used) > :first').parent().addClass("used").attr('id', data['result']['insertId']);
+                    $('#'+ TU{!! $imageObj !!}.ids['preview'] +' .box-image:not(.used) > :first').parent().addClass("used").attr('id', data['result']['insertId']);
 
 
-                    if(TU{!! $dir_studly !!}.progress != '') {
+                    if(TU{!! $imageObj !!}.progress != '') {
 
-                        $.each($('#'+ TU{!! $dir_studly !!}.ids['preview']).children(), function(index, child){
+                        $.each($('#'+ TU{!! $imageObj !!}.ids['preview']).children(), function(index, child){
 
                             if(!$(child).find('.{!! $id_hidden_name !!}').length) {
 
@@ -136,7 +136,7 @@
                         loadImage(file, function (img) {
 
                             if(img.type != 'error') {
-                                TU{!! $dir_studly !!}.preview(
+                                TU{!! $imageObj !!}.preview(
                                         img,
                                         data['result']['insertId'],
                                         file.name,
@@ -148,11 +148,11 @@
 
                             }
 
-                        }, TU{!! $dir_studly !!}.previewParameters, data['result']['file_path']);
+                        }, TU{!! $imageObj !!}.previewParameters, data['result']['file_path']);
 
                     } else {
 
-                        TU{!! $dir_studly !!}.processingFile--;
+                        TU{!! $imageObj !!}.processingFile--;
                         {!! (!empty($callbacks['failed'])) ? $callbacks['failed'] : '' !!}
 
                     }
@@ -161,7 +161,7 @@
 
             }).bind('fileuploadsubmit', function (e, data) {
 
-                data.formData = TU{!! $dir_studly !!}.formData;
+                data.formData = TU{!! $imageObj !!}.formData;
 
             });
 
@@ -194,15 +194,15 @@
 
             if(saveMode == 'overwrite') {
 
-                var originalObj = TU{!! $dir_studly !!}.overwritePreviewBox;
+                var originalObj = TU{!! $imageObj !!}.overwritePreviewBox;
 
                 originalObj.prepend('<div class="box-header with-border"></div>');
                 originalObj.find('.box-body').removeAttr('style').append(content);
 
-                $('#'+ TU{!! $dir_studly !!}.ids['preview']).find(content)
+                $('#'+ TU{!! $imageObj !!}.ids['preview']).find(content)
                         .css({'text-align' : 'center', 'height' : '254px'});
 
-                $('#'+ TU{!! $dir_studly !!}.ids['preview']).find(content).find('img')
+                $('#'+ TU{!! $imageObj !!}.ids['preview']).find(content).find('img')
                         .wrap('<div class="col-md-12" style="height:200px; margin-bottom:20px;"></div>')
                         .css({
                             'width' : 'auto',
@@ -220,23 +220,23 @@
 
 
 
-                $('#'+ TU{!! $dir_studly !!}.ids['preview'] +' #'+ id).find('.box-body').empty();
+                $('#'+ TU{!! $imageObj !!}.ids['preview'] +' #'+ id).find('.box-body').empty();
 
-                $('#'+ TU{!! $dir_studly !!}.ids['preview'] +' #'+ id).find('.box-body').parent().prepend('<div class="box-header with-border"></div>');
-                $('#'+ TU{!! $dir_studly !!}.ids['preview'] +' #'+ id).find('.box-body').removeAttr('style').append(content);
+                $('#'+ TU{!! $imageObj !!}.ids['preview'] +' #'+ id).find('.box-body').parent().prepend('<div class="box-header with-border"></div>');
+                $('#'+ TU{!! $imageObj !!}.ids['preview'] +' #'+ id).find('.box-body').removeAttr('style').append(content);
 
-                var divCol = $('#'+ TU{!! $dir_studly !!}.ids['preview']).find(content).parent().parent().parent();
+                var divCol = $('#'+ TU{!! $imageObj !!}.ids['preview']).find(content).parent().parent().parent();
 
                 divCol.find('.images')
                         .css({'text-align' : 'center'});
 
                 divCol.find('.images').find('img')
-                        .wrap('<div class="col-md-12" style="height:'+TU{!! $dir_studly !!}.previewParameters.maxHeight+'; margin-bottom:20px;"></div>')
+                        .wrap('<div class="col-md-12" style="height:'+TU{!! $imageObj !!}.previewParameters.maxHeight+'; margin-bottom:20px;"></div>')
                         .css({
                             'width' : 'auto',
                             'height' : 'auto',
-                            'max-height' : TU{!! $dir_studly !!}.previewParameters.maxHeight,
-                            'max-width' : TU{!! $dir_studly !!}.previewParameters.maxWidth,
+                            'max-height' : TU{!! $imageObj !!}.previewParameters.maxHeight,
+                            'max-width' : TU{!! $imageObj !!}.previewParameters.maxWidth,
                             'vertical-align' : 'middle'
                         }).parent().prepend('<span class="helper" style="display: inline-block; height: 100%; vertical-align: middle;"></span>');
 
@@ -247,17 +247,17 @@
 
             {!! (!empty($callbacks['load'])) ? $callbacks['load'] : '' !!}
 
-            TU{!! $dir_studly !!}.resizeheight();
-            TU{!! $dir_studly !!}.formData['surpass_overwrite_id'] = 0;
-            TU{!! $dir_studly !!}.imageOrder++;
+            TU{!! $imageObj !!}.resizeheight();
+            TU{!! $imageObj !!}.formData['surpass_overwrite_id'] = 0;
+            TU{!! $imageObj !!}.imageOrder++;
             $('#preview_images').trigger('sortupdate');
 
         },
         resizeheight: function() {
 
-            if(TU{!! $dir_studly !!}.processingFile >= 1){
+            if(TU{!! $imageObj !!}.processingFile >= 1){
 
-                processingfilenr = TU{!! $dir_studly !!}.processingFile
+                processingfilenr = TU{!! $imageObj !!}.processingFile
 
                 if($( window ).width() < "751") {
                     $("#preview_images").height(function (index, height) {
@@ -282,20 +282,20 @@
         },
         initialPreview: function() {
 
-            TU{!! $dir_studly !!}.processingFile = TU{!! $dir_studly !!}.loadData.length;
-            $.each(TU{!! $dir_studly !!}.loadData, function(key, loadValues){
+            TU{!! $imageObj !!}.processingFile = TU{!! $imageObj !!}.loadData.length;
+            $.each(TU{!! $imageObj !!}.loadData, function(key, loadValues){
                 var id = loadValues['id'];
                 var url = loadValues['url'];
                 var filename = loadValues['filename'];
                 var img = $('<img/>', {
                     src: url
                 });
-                var loadingBox = tmpl('loading_box_{!! $dir !!}', {content: TU{!! $dir_studly !!}.progress, imageid: id});
-                $('#' + TU{!! $dir_studly !!}.ids['preview']).append(loadingBox);
-                $('#'+ TU{!! $dir_studly !!}.ids['preview'] +' #'+ id).addClass("used");
+                var loadingBox = tmpl('loading_box_{!! $dir !!}', {content: TU{!! $imageObj !!}.progress, imageid: id});
+                $('#' + TU{!! $imageObj !!}.ids['preview']).append(loadingBox);
+                $('#'+ TU{!! $imageObj !!}.ids['preview'] +' #'+ id).addClass("used");
                 loadImage(url, function (img) {
-                            TU{!! $dir_studly !!}.preview(img, id, filename)
-                        }, TU{!! $dir_studly !!}.previewParameters
+                            TU{!! $imageObj !!}.preview(img, id, filename)
+                        }, TU{!! $imageObj !!}.previewParameters
                 );
             });
 
@@ -304,15 +304,15 @@
 
             $(self).addClass('disabled');
 
-            var removeUrl = $('#'+ TU{!! $dir_studly !!}.ids['input']).data('removeUrl');
-            var formData = TU{!! $dir_studly !!}.formData;
+            var removeUrl = $('#'+ TU{!! $imageObj !!}.ids['input']).data('removeUrl');
+            var formData = TU{!! $imageObj !!}.formData;
             formData['remove_id'] = id;
 
-            $.post(removeUrl, TU{!! $dir_studly !!}.formData, function(data){
+            $.post(removeUrl, TU{!! $imageObj !!}.formData, function(data){
 
                 if(data['result']) {
 
-                    TU{!! $dir_studly !!}.removeBox($(self).parent().parent().parent().parent().parent());
+                    TU{!! $imageObj !!}.removeBox($(self).parent().parent().parent().parent().parent());
 
 
                 }
@@ -326,12 +326,12 @@
         removeBox: function(targetObj) {
 
             targetObj.remove();
-            TU{!! $dir_studly !!}.processingFile--;
-            TU{!! $dir_studly !!}.imageOrder--;
-            TU{!! $dir_studly !!}.formData['surpass_overwrite_id'] = -1;
-            TU{!! $dir_studly !!}.overwritePreviewBox = null;
+            TU{!! $imageObj !!}.processingFile--;
+            TU{!! $imageObj !!}.imageOrder--;
+            TU{!! $imageObj !!}.formData['surpass_overwrite_id'] = -1;
+            TU{!! $imageObj !!}.overwritePreviewBox = null;
 
-            TU{!! $dir_studly !!}.resizeheight();
+            TU{!! $imageObj !!}.resizeheight();
 
             $('#preview_images').trigger('sortupdate');
 
@@ -340,20 +340,20 @@
 
             $(self).addClass('disabled');
 
-            TU{!! $dir_studly !!}.formData['surpass_overwrite_id'] = targetId;
-            TU{!! $dir_studly !!}.overwritePreviewBox = $(container);
-            $('#'+ TU{!! $dir_studly !!}.ids['input']).click();
-            TU{!! $dir_studly !!}.imageOrder--;
+            TU{!! $imageObj !!}.formData['surpass_overwrite_id'] = targetId;
+            TU{!! $imageObj !!}.overwritePreviewBox = $(container);
+            $('#'+ TU{!! $imageObj !!}.ids['input']).click();
+            TU{!! $imageObj !!}.imageOrder--;
 
             $(self).removeClass('disabled');
 
         },
         isFull: function() {
 
-            var processingFileCount = TU{!! $dir_studly !!}.processingFile;
-            var maxFileCount = TU{!! $dir_studly !!}.maxFile;
+            var processingFileCount = TU{!! $imageObj !!}.processingFile;
+            var maxFileCount = TU{!! $imageObj !!}.maxFile;
 
-            if(TU{!! $dir_studly !!}.formData['surpass_overwrite_id'] > 0
+            if(TU{!! $imageObj !!}.formData['surpass_overwrite_id'] > 0
                     && processingFileCount <= maxFileCount) {
 
                 return false;
@@ -392,13 +392,13 @@
     @shield('admin.product.edit')
     <input class="{!! $id_hidden_name !!}" type="hidden" name="{!! $id_hidden_name !!}[]" value="{%=o.surpassId%}">
     <div class="col-md-4 col-sm-6 col-xs-12">
-        <button{!! $css_changebutton !!} type="button" imageid="{%=o.surpassId%}" onclick="return TU{!! $dir_studly !!}.overwrite(this, this.parentNode.parentNode.parentNode.parentNode, {%=o.surpassId%});">Verander</button>
+        <button{!! $css_changebutton !!} type="button" imageid="{%=o.surpassId%}" onclick="return TU{!! $imageObj !!}.overwrite(this, this.parentNode.parentNode.parentNode.parentNode, {%=o.surpassId%});">Verander</button>
     </div>
     <div class="col-md-4 col-sm-6 col-xs-12">
         <button{!! $css_editbutton !!} type="button" onclick="openResizeCropModal(this,{%=o.surpassId%},'{%=o.img%}')" >bewerk</button>
     </div>
     <div class="col-md-4 col-sm-6 col-xs-12">
-        <button{!! $css_deletebutton !!} type="button" onclick="return TU{!! $dir_studly !!}.remove(this, {%=o.surpassId%});">{!! $button_label !!}</button>
+        <button{!! $css_deletebutton !!} type="button" onclick="return TU{!! $imageObj !!}.remove(this, {%=o.surpassId%});">{!! $button_label !!}</button>
     </div>
     @endshield
 </script>
@@ -406,43 +406,43 @@
 
     $(document).ready(function(){
 
-        TU{!! $dir_studly !!}.ids = {
+        TU{!! $imageObj !!}.ids = {
             input: '{!! $input_id !!}',
             preview: '{!! $preview_id !!}'
         };
-        TU{!! $dir_studly !!}.maxFile = {!! $max_file !!};
+        TU{!! $imageObj !!}.maxFile = {!! $max_file !!};
 
         @if(!empty($load_data))
 
-        TU{!! $dir_studly !!}.loadData = {!! json_encode($load_data) !!};
+        TU{!! $imageObj !!}.loadData = {!! json_encode($load_data) !!};
 
         @endif
 
         @if(!empty($form_data))
 
-        TU{!! $dir_studly !!}.formData = {!! json_encode($form_data) !!};
+        TU{!! $imageObj !!}.formData = {!! json_encode($form_data) !!};
 
         @endif
 
         @if(!empty($preview_params))
 
-        TU{!! $dir_studly !!}.previewParameters = {!! json_encode($preview_params) !!};
+        TU{!! $imageObj !!}.previewParameters = {!! json_encode($preview_params) !!};
 
         @endif
 
         @if(!empty($progress))
 
-        TU{!! $dir_studly !!}.progress = '{!! $progress !!}';
+        TU{!! $imageObj !!}.progress = '{!! $progress !!}';
 
         @endif
 
-        TU{!! $dir_studly !!}.overCallback = function(){
+        TU{!! $imageObj !!}.overCallback = function(){
             alert('{!! $alert !!}');
         };
-        TU{!! $dir_studly !!}.init();
+        TU{!! $imageObj !!}.init();
 
         $( window ).resize(function() {
-            TU{!! $dir_studly !!}.resizeheight();
+            TU{!! $imageObj !!}.resizeheight();
         });
 
 
@@ -486,11 +486,11 @@
             canvasImage = $image.cropper('getCroppedCanvas');
             $image.cropper('destroy');
             var imgid = $('#resizeCropimage').attr('imgid');
-            var input = $('#'+ TU{!! $dir_studly !!}.ids['input']);
-            var uploadUrl = $('#'+ TU{!! $dir_studly !!}.ids['input']).attr('data-url');
+            var input = $('#'+ TU{!! $imageObj !!}.ids['input']);
+            var uploadUrl = $('#'+ TU{!! $imageObj !!}.ids['input']).attr('data-url');
             var fileName = "upload.png";
 
-            var loadingBox = tmpl('loading_box_change_{!! $dir !!}', {content: TU{!! $dir_studly !!}.progress, imageid: imgid});
+            var loadingBox = tmpl('loading_box_change_{!! $dir !!}', {content: TU{!! $imageObj !!}.progress, imageid: imgid});
             $('.{!! $id_hidden_name !!}[value='+imgid+']').parent().parent().parent().empty().append(loadingBox).parent().removeClass("used");
 
             if (canvasImage.toBlob) {
@@ -515,13 +515,13 @@
                                     saveMode = "edit";
 
 
-                                    $('#'+ TU{!! $dir_studly !!}.ids['preview'] +' .box-image:not(.used) > :first').parent().addClass("used").attr('id', data['insertId']);
+                                    $('#'+ TU{!! $imageObj !!}.ids['preview'] +' .box-image:not(.used) > :first').parent().addClass("used").attr('id', data['insertId']);
 
 
                                     loadImage(blob, function (img) {
 
                                         if(img.type != 'error') {
-                                            TU{!! $dir_studly !!}.preview(
+                                            TU{!! $imageObj !!}.preview(
                                                     img,
                                                     data['insertId'],
                                                     data['filename'],
@@ -533,7 +533,7 @@
 
                                         }
 
-                                    }, TU{!! $dir_studly !!}.previewParameters, data['file_path']);
+                                    }, TU{!! $imageObj !!}.previewParameters, data['file_path']);
 
 
                                 }
