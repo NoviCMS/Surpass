@@ -24,6 +24,7 @@ class Surpass {
     private $_filename_length = 10;
     private $_timeout = 0;
     private $_form_data, $_result, $_load, $_resize_params, $_css = [];
+    public $_file_path;
     private $_overwrite = false;
     private $_ids = ['input' => 'image_upload', 'preview' => 'preview_images'];
     private $_callbacks = ['add' => '', 'done' => ''];
@@ -258,7 +259,8 @@ class Surpass {
         try {
 
             $extension = File::extension($file_path);
-            $filename = $this->filename($extension);
+            $filenameWithoutExtension = $this->filenameWithoutExtension();
+            $filename = $this->filename($filenameWithoutExtension, $extension);
             $size = File::size($file_path);
             $save_dir = $this->filePath($this->_dir);
 
@@ -292,7 +294,8 @@ class Surpass {
         $mime_type = '';
         $input_id = $this->_ids['input'];
         $extension = Input::file('image_upload')->getClientOriginalExtension();
-        $filename = $this->filename($extension);
+        $filenameWithoutExtension = $this->filenameWithoutExtension();
+        $filename = $this->filename($filenameWithoutExtension, $extension);
         $file_size = Input::file('image_upload')->getSize();
         $error_message = '';
 
@@ -356,6 +359,11 @@ class Surpass {
             'mime_type' => $mime_type,
             'saveMode' => ($this->isOverwrite()) ? 'overwrite' : 'insert'
         ];
+
+        $this->_file_name = $filename;
+        $this->_file_name_without_extension = $filenameWithoutExtension;
+        $this->_file_extension = $extension;
+        $this->_file_path = $this->_path .'/'. $this->_dir;
 
         if(!empty($error_message)) {
 
@@ -701,9 +709,15 @@ class Surpass {
 
     }
 
-    private function filename($extension) {
+    private function filename($filenameWithoutExtension, $extension) {
 
-        return str_random($this->_filename_length) .'.'. $extension;
+        return $filenameWithoutExtension .'.'. $extension;
+
+    }
+
+    private function filenameWithoutExtension() {
+
+        return str_random($this->_filename_length);
 
     }
 
